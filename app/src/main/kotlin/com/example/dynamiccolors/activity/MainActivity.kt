@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -22,6 +24,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
@@ -105,7 +108,6 @@ class MainActivity : AppCompatActivity() {
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL)
             layoutParams.bottomMargin = vm.convertDpToPixel(BUTTON_BOTTOM_MARGIN, context)
             this.layoutParams = layoutParams
-            setPadding(32, 16, 32, 16)
         }
         binding.root.addView(dynamicButton)
         dynamicButton.setOnClickListener {
@@ -113,6 +115,18 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d(TAG, "dynamicButton.currentTextColor = ${dynamicButton.currentTextColor}")
         Log.d(TAG, "dynamicButton.highlightColor = ${dynamicButton.highlightColor}")
+    }
+
+    private fun addProgressIndicator() {
+        Log.d(TAG, "addProgressIndicator()")
+        val progressIndicator = CircularProgressIndicator(this).apply { isIndeterminate = true }
+        val layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        layoutParams.gravity = Gravity.CENTER
+        progressIndicator.layoutParams = layoutParams
+        binding.imagePlaceholder.addView(progressIndicator)
     }
 
     private fun showInputDialog() {
@@ -128,6 +142,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle(DIALOG_TITLE)
             .setView(inputLayout)
             .setPositiveButton(DIALOG_POSITIVE_BUTTON_TEXT) { _, _ ->
+                addProgressIndicator()
                 vm.loadImage(inputEditText.text.toString())
             }
             .setNegativeButton(DIALOG_NEGATIVE_BUTTON_TEXT, null)
